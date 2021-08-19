@@ -1,8 +1,8 @@
 const express = require("express");
 const routes = express.Router();
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser").json;
 const db = require("../database");
-const newUser = require("../Models/userSchema");
+const modelUser = require("../Models/userSchema");
 
 routes.get("/", (req, res) => {
   res.send("Olá Mundo");
@@ -11,9 +11,10 @@ routes.get("/", (req, res) => {
 routes.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  res
-    .status(200)
-    .send(`e-mail e senha recebidos com sucesso ${email}, ${password}`);
+
+  const user = modelUser.find({ email: email }, (err, docs) => {
+    res.status(200).send(docs);
+  });
 });
 
 routes.post("/register", (req, res) => {
@@ -22,12 +23,12 @@ routes.post("/register", (req, res) => {
   const password = req.body.password;
 
   try {
-    newUser.create({
+    modelUser.create({
       name: name,
       email: email,
       password: password,
     });
-    res.status(200).send({ message: "Novo usuário salvo com sucesso!" });
+    res.status(200).send({ message: "Novo usuário salvo com sucesso" });
   } catch (err) {
     res
       .status(400)
