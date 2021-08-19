@@ -1,6 +1,6 @@
 const express = require("express");
 const routes = express.Router();
-const bodyParser = require("body-parser").json;
+const bodyParser = require("body-parser");
 const db = require("../database");
 const modelUser = require("../Models/userSchema");
 
@@ -11,9 +11,15 @@ routes.get("/", (req, res) => {
 routes.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  let pass = null;
 
-  const user = modelUser.find({ email: email }, (err, docs) => {
-    res.status(200).send(docs);
+  const getUser = modelUser.find({ email: email }, (err, docs) => {
+    pass = docs[0].password;
+    if (pass == password) {
+      res.status(200).send(docs[0]);
+    } else {
+      res.status(404).send({ error: "Senha Incorreta" });
+    }
   });
 });
 
