@@ -15,4 +15,15 @@ routes.post("/login", (req, res) => {
     .send(`e-mail e senha recebidos com sucesso ${email}, ${password}`);
 });
 
+routes.post("/register", (req, res) => {
+  const name = req.body.name;
+  const email = req.body.email;
+  const password = req.body.password;
+  res
+    .status(200)
+    .send({
+      message: `Os dados do novo usuário foram recebidos: SEJA BEM VINDO ${name}`,
+    });
+});
+
 module.exports = routes;
