@@ -1,6 +1,6 @@
 const express = require("express");
 const routes = express.Router();
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser").json;
 const db = require("../database");
 const modelUser = require("../Models/userSchema");
 
@@ -9,16 +9,19 @@ routes.get("/", (req, res) => {
 });
 
 routes.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  let pass = null;
+  const email = req.body.email || false;
+  const password = req.body.password || false;
 
   const getUser = modelUser.find({ email: email }, (err, docs) => {
-    pass = docs[0].password;
-    if (pass == password) {
-      res.status(200).send(docs[0]);
+    if (docs.length == 0) {
+      res.status(404).send({ message: "Erro ao fazer login" });
+      return;
+    }
+
+    if (docs[0].password == password) {
+      res.status(200).send(docs);
     } else {
-      res.status(404).send({ error: "Senha Incorreta" });
+      res.status(404).send({ message: "Erro ao fazer login" });
     }
   });
 });
