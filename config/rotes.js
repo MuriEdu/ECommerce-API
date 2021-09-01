@@ -4,10 +4,6 @@ const bodyParser = require("body-parser").json;
 const db = require("../database");
 const modelUser = require("../Models/userSchema");
 
-routes.get("/", (req, res) => {
-  res.send("Olá Mundo");
-});
-
 routes.post("/login", (req, res) => {
   const email = req.body.email || false;
   const password = req.body.password || false;
@@ -42,6 +38,22 @@ routes.post("/register", (req, res) => {
     res
       .status(400)
       .send({ error: `OCORREU UM ERRO AO SALVAR O NOVO USUÁRIO: ${err}` });
+  }
+});
+
+routes.post("/add-address", (req, res) => {
+  const id = req.body._id;
+  const addressReq = req.body.addressReq;
+
+  try {
+    modelUser.findOne({ _id: id }, (err, docs) => {
+      docs.address = addressReq;
+      docs.save(() => {
+        res.status(200).send(docs);
+      });
+    });
+  } catch (err) {
+    res.status(400).send({ error: "erro ao adicionar enderço" });
   }
 });
 
